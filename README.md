@@ -73,6 +73,32 @@ The template provides a guide for what to add. A custom `README` will help you e
 
 Once you've added your information to the template, delete this file and rename the `README-template.md` file to `README.md`. That will make it show up as your repository's README file.
 
+## Next.js + TypeScript setup
+
+This repository now includes a minimal Next.js + TypeScript scaffold.
+
+- To install dependencies:
+
+```powershell
+npm install
+```
+
+- To run the dev server:
+
+```powershell
+npm run dev
+```
+
+The app is available at `http://localhost:3000`.
+
+Files added:
+
+- `package.json` — scripts and dependencies
+- `tsconfig.json`, `next-env.d.ts` — TypeScript setup
+- `src/pages/_app.tsx`, `src/pages/index.tsx` — basic pages
+- `styles/global.css` — global styles
+- `.gitignore`
+
 ## Submitting your solution
 
 Submit your solution on the platform for the rest of the community to see. Follow our ["Complete guide to submitting solutions"](https://medium.com/frontend-mentor/a-complete-guide-to-submitting-solutions-on-frontend-mentor-ac6384162248) for tips on how to do this.
