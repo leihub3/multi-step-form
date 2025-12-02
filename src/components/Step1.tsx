@@ -7,10 +7,11 @@ import {
   Stack,
   FormHelperText,
 } from '@mui/material'
+import StepperNavigation from './StepperNavigation'
 import { useForm } from '@/context/FormContext'
 
 export const Step1: React.FC = () => {
-  const { personalInfo, setPersonalInfo, setCurrentStep } = useForm()
+  const { personalInfo, setPersonalInfo, setCurrentStep, currentStep } = useForm()
   const [errors, setErrors] = React.useState({
     name: '',
     email: '',
@@ -67,9 +68,19 @@ export const Step1: React.FC = () => {
       setErrors(newErrors)
     }
   }
+  const handleBack = () => {
+    setCurrentStep(currentStep - 1)
+  }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 700, color: '#1f2937', mb: 1 }}>
           Personal info
@@ -100,7 +111,6 @@ export const Step1: React.FC = () => {
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
               },
             }}
           />
@@ -127,7 +137,6 @@ export const Step1: React.FC = () => {
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
               },
             }}
           />
@@ -153,32 +162,13 @@ export const Step1: React.FC = () => {
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
               },
             }}
           />
         </Box>
       </Stack>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 6 }}>
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          sx={{
-            backgroundColor: '#1f2937',
-            color: '#fff',
-            padding: '0.75rem 1.75rem',
-            fontWeight: 500,
-            textTransform: 'none',
-            fontSize: '1rem',
-            '&:hover': {
-              backgroundColor: '#111827',
-            },
-          }}
-        >
-          Next Step
-        </Button>
-      </Box>
+      <StepperNavigation currentStep={currentStep} handleBack={handleBack} handleNext={handleNext} />
     </Box>
   )
 }
