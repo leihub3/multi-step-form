@@ -17,6 +17,11 @@ export const Step1: React.FC = () => {
     email: '',
     phone: '',
   })
+  const [touched, setTouched] = React.useState({
+    name: false,
+    email: false,
+    phone: false,
+  })
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -28,44 +33,71 @@ export const Step1: React.FC = () => {
     return re.test(phone) && phone.trim().length > 0
   }
 
+  const validateField = (field: keyof typeof personalInfo, value: string): string => {
+    switch (field) {
+      case 'name':
+        if (!value.trim()) {
+          return 'Name is required'
+        }
+        return ''
+      case 'email':
+        if (!value.trim()) {
+          return 'Email is required'
+        } else if (!validateEmail(value)) {
+          return 'Invalid email address'
+        }
+        return ''
+      case 'phone':
+        if (!value.trim()) {
+          return 'Phone number is required'
+        } else if (!validatePhone(value)) {
+          return 'Invalid phone number'
+        }
+        return ''
+      default:
+        return ''
+    }
+  }
+
   const handleChange = (field: keyof typeof personalInfo) => (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value
     setPersonalInfo({ ...personalInfo, [field]: value })
-    // Clear error on change
-    setErrors({ ...errors, [field]: '' })
+    // Clear error on change if field has been touched
+    if (touched[field]) {
+      const error = validateField(field, value)
+      setErrors({ ...errors, [field]: error })
+    } else {
+      setErrors({ ...errors, [field]: '' })
+    }
+  }
+
+  const handleBlur = (field: keyof typeof personalInfo) => () => {
+    setTouched({ ...touched, [field]: true })
+    const value = personalInfo[field]
+    const error = validateField(field, value)
+    setErrors({ ...errors, [field]: error })
   }
 
   const handleNext = () => {
-    let newErrors = { name: '', email: '', phone: '' }
-    let isValid = true
+    // Mark all fields as touched when attempting to submit
+    setTouched({ name: true, email: true, phone: true })
 
-    if (!personalInfo.name.trim()) {
-      newErrors.name = 'Name is required'
-      isValid = false
+    // Validate all fields
+    const newErrors = {
+      name: validateField('name', personalInfo.name),
+      email: validateField('email', personalInfo.email),
+      phone: validateField('phone', personalInfo.phone),
     }
 
-    if (!personalInfo.email.trim()) {
-      newErrors.email = 'Email is required'
-      isValid = false
-    } else if (!validateEmail(personalInfo.email)) {
-      newErrors.email = 'Invalid email address'
-      isValid = false
-    }
+    setErrors(newErrors)
 
-    if (!personalInfo.phone.trim()) {
-      newErrors.phone = 'Phone number is required'
-      isValid = false
-    } else if (!validatePhone(personalInfo.phone)) {
-      newErrors.phone = 'Invalid phone number'
-      isValid = false
-    }
+    // Check if form is valid
+    const isValid = !newErrors.name && !newErrors.email && !newErrors.phone
 
     if (isValid) {
       setCurrentStep(2)
-    } else {
-      setErrors(newErrors)
     }
   }
   const handleBack = () => {
@@ -96,7 +128,7 @@ export const Step1: React.FC = () => {
             <Typography sx={{ fontWeight: 500, fontSize: '0.875rem', color: '#1f2937' }}>
               Name
             </Typography>
-            {errors.name && (
+            {errors.name && touched.name && (
               <FormHelperText error sx={{ m: 0, fontSize: '0.75rem' }}>
                 {errors.name}
               </FormHelperText>
@@ -107,7 +139,8 @@ export const Step1: React.FC = () => {
             placeholder="e.g. Stephen King"
             value={personalInfo.name}
             onChange={handleChange('name')}
-            error={!!errors.name}
+            onBlur={handleBlur('name')}
+            error={!!errors.name && touched.name}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
@@ -121,7 +154,7 @@ export const Step1: React.FC = () => {
             <Typography sx={{ fontWeight: 500, fontSize: '0.875rem', color: '#1f2937' }}>
               Email Address
             </Typography>
-            {errors.email && (
+            {errors.email && touched.email && (
               <FormHelperText error sx={{ m: 0, fontSize: '0.75rem' }}>
                 {errors.email}
               </FormHelperText>
@@ -133,7 +166,8 @@ export const Step1: React.FC = () => {
             type="email"
             value={personalInfo.email}
             onChange={handleChange('email')}
-            error={!!errors.email}
+            onBlur={handleBlur('email')}
+            error={!!errors.email && touched.email}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
@@ -147,7 +181,7 @@ export const Step1: React.FC = () => {
             <Typography sx={{ fontWeight: 500, fontSize: '0.875rem', color: '#1f2937' }}>
               Phone Number
             </Typography>
-            {errors.phone && (
+            {errors.phone && touched.phone && (
               <FormHelperText error sx={{ m: 0, fontSize: '0.75rem' }}>
                 {errors.phone}
               </FormHelperText>
@@ -158,7 +192,8 @@ export const Step1: React.FC = () => {
             placeholder="e.g. +1 234 567 890"
             value={personalInfo.phone}
             onChange={handleChange('phone')}
-            error={!!errors.phone}
+            onBlur={handleBlur('phone')}
+            error={!!errors.phone && touched.phone}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '0.5rem',
