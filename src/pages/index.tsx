@@ -2,6 +2,9 @@ import Head from 'next/head'
 import { Box, Container, Grid } from '@mui/material'
 import { Stepper } from '@/components/Stepper'
 import { Step1 } from '@/components/Step1'
+import { Step2 } from '@/components/Step2'
+import { Step3 } from '@/components/Step3'
+import { Step4 } from '@/components/Step4'
 import { useForm } from '@/context/FormContext'
 
 const STEPS = [
@@ -46,9 +49,18 @@ export default function Home() {
             </Grid>
 
             {/* Content */}
-            <Grid item xs={12} md={8}>
+            <Grid
+              item
+              xs={12}
+              md={8}
+              sx={{
+                display: 'flex',
+              }}
+            >
               {currentStep === 1 && <Step1 />}
-              {/* Steps 2, 3, 4 will be added here */}
+              {currentStep === 2 && <Step2 />}
+              {currentStep === 3 && <Step3 />}
+              {currentStep === 4 && <Step4 />}
             </Grid>
           </Grid>
         </Container>
